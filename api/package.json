@@ -1,0 +1,31 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config webpack.config.js",
+    "start": "node ./dist/index.js",
+    "docker:up": "cd ../ && docker-compose up",
+    "docker:down": "cd ../ && docker-compose down",
+    "ssh": "docker exec -it $CONTAINER sh"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.16.1",
+    "@types/lodash": "^4.14.123",
+    "@types/node": "^11.13.0",
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.4.1",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "lodash": "^4.17.11",
+    "pg": "^7.9.0",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.16"
+  }
+}
