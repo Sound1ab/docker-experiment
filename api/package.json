@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node ./src/index.ts",
+    "start": "tsnd --respawn ./src/index.ts",
     "docker:up": "cd ../ && docker-compose up",
     "docker:down": "cd ../ && docker-compose down",
     "ssh": "docker exec -it $CONTAINER sh"
@@ -21,8 +21,10 @@
     "webpack-cli": "^3.3.0"
   },
   "dependencies": {
+    "apollo-server-express": "^2.4.8",
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
+    "graphql": "^14.2.1",
     "lodash": "^4.17.11",
     "pg": "^7.9.0",
     "pg-hstore": "^2.3.2",

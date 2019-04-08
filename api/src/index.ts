@@ -1,30 +1,76 @@
 import 'reflect-metadata'
-import { createConnection } from 'typeorm'
+import { createConnection, getConnection, Repository } from 'typeorm'
 import express from 'express'
 import { config } from './config'
+import { ApolloServer, IResolvers } from 'apollo-server-express'
+import fs from 'fs'
 import { Todo } from './entities/Todo'
 
+interface IGetTodo {
+  id: number
+}
+
+interface ICreateTodo {
+  input: {
+    description?: string
+  }
+}
+
+async function configureRepository<T>(
+  fn: (repository: Repository<Todo>, args: T) => any
+) {
+  try {
+    const repository = await getConnection().getRepository(Todo)
+    return (_: any, args: T) => {
+      return fn(repository, args)
+    }
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
 createConnection(config as any)
-  .then(async connection => {
-    const PORT = process.env.PORT || 8088
+  .then(async () => {
+    const port = process.env.PORT || 8088
     const app = express()
 
     app.set('env', process.env.APP_ENV)
 
-    app.listen(PORT, () => {
-      console.log(`Server listening on port ${PORT}`)
-    })
+    const typeDefs = fs
+      .readFileSync(`${__dirname}/schema/index.graphql`, 'utf8')
+      .toString()
 
-    app.get('/', function(req, res) {
-      res.send('hello yo yo')
-    })
+    // Provide resolver functions for your schema fields
+    const resolvers: IResolvers = {
+      Query: {
+        getTodo: await configureRepository<IGetTodo>((repository, { id }) => {
+          return repository.findOne(id)
+        }),
+        listTodos: await configureRepository<{}>(repository => {
+          return repository.find()
+        }),
+      },
+      Mutation: {
+        createTodo: await configureRepository<ICreateTodo>(
+          async (repository, { input: { description = '' } }) => {
+            console.log('description', description)
+            const todo = new Todo()
+            todo.description = description
+            todo.isDone = false
+            return repository.save(todo)
+          }
+        ),
+      },
+    }
 
-    let todo = new Todo()
-    todo.description = 'Clean room'
-    todo.isDone = true
+    const server = new ApolloServer({ typeDefs, resolvers })
 
-    return connection.manager.save(todo).then(todo => {
-      console.log('Todo has been saved. Todo id is', todo.id)
-    })
+    server.applyMiddleware({ app })
+
+    app.listen({ port }, () =>
+      console.log(
+        `🚀 Server ready at http://localhost:${port}${server.graphqlPath}`
+      )
+    )
   })
   .catch(error => console.log(error))
