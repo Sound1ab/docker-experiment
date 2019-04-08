@@ -15,6 +15,7 @@
     "@types/express": "^4.16.1",
     "@types/node": "^11.13.0",
     "ts-loader": "^5.3.3",
+    "ts-node-dev": "^1.0.0-pre.32",
     "typescript": "^3.4.1",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0"

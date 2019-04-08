@@ -1,4 +1,5 @@
-FROM node:8
+FROM node:carbon
 WORKDIR usr/src/api
 ADD . .
-RUN npm install && npm run build
+#RUN apt-get install inotify-tools
+RUN npm install
