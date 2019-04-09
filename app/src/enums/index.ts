@@ -1,6 +1,5 @@
 export enum TOGGLES {
-  ROCK = 'rock',
-  FOLK = 'folk',
-  JAZZ = 'jazz',
+  COMPLETE = 'complete',
+  INCOMPLETE = 'incomplete',
   ALL = 'all',
 }
