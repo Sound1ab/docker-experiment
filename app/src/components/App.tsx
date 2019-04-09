@@ -1,17 +1,15 @@
+import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { ApolloProvider } from 'react-apollo'
+import { Query } from 'react-apollo'
 import { GoogleFont, TypographyStyle } from 'react-typography'
 import { TOGGLES } from '../enums'
-import { useData } from '../hooks'
-import { IEvent } from '../interfaces'
 import { client } from '../services/Apollo/clientConfig'
 import { typography } from '../theme/typography'
 import { Container } from './atoms'
 import { Banner, Toggle } from './molecules'
 import { CardList } from './organism'
 import { GlobalStyle, ThemeProvider } from './utility'
-import { Query } from 'react-apollo'
-import gql from 'graphql-tag'
 
 const ListTodosDocument = gql`
   {
@@ -20,19 +18,18 @@ const ListTodosDocument = gql`
         description
         id
         isDone
+        createdAt {
+          dateLongForm
+          dayOfMonth
+          dayOfWeek
+          month
+        }
       }
     }
   }
 `
 
-interface ITodo {
-  id: number
-  description: string
-  isDone: boolean
-}
-
 export function App() {
-  // const [data, loading] = useData<IEvent[]>()
   const [toggle, setToggle] = useState(TOGGLES.ALL)
 
   function handleToggle(

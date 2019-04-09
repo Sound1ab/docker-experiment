@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm'
 
 @Entity()
 export class Todo {
@@ -10,4 +16,10 @@ export class Todo {
 
   @Column('boolean')
   public isDone: boolean
+
+  @CreateDateColumn()
+  public createdAt: string
+
+  @UpdateDateColumn()
+  public updatedAt: string
 }

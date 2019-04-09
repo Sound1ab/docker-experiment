@@ -25,17 +25,39 @@ interface IDeleteTodo {
   }
 }
 
+function parseDate(date: string) {
+  const jsDate = new Date(date)
+  const splitDate = jsDate.toDateString().split(' ')
+
+  return {
+    dateLongForm: jsDate.toISOString(),
+    dayOfMonth: splitDate[2],
+    dayOfWeek: splitDate[0],
+    month: splitDate[1],
+  }
+}
+
+function formatResult(todo: Todo | undefined) {
+  if (!todo) return null
+  return {
+    ...todo,
+    createdAt: parseDate(todo.createdAt),
+    updatedAt: parseDate(todo.updatedAt),
+  }
+}
+
 export async function TodoQueries() {
   return {
     getTodo: await configureRepository<Todo, IGetTodo>(
       Todo,
-      (repository, { id }) => {
-        return repository.findOne(id)
+      async (repository, { id }) => {
+        return formatResult(await repository.findOne(id))
       }
     ),
-    listTodos: await configureRepository<Todo, {}>(Todo, repository => {
+    listTodos: await configureRepository<Todo, {}>(Todo, async repository => {
+      const results = await repository.find()
       return {
-        items: repository.find(),
+        items: results.map(formatResult),
         nextToken: '1234',
       }
     }),
@@ -50,7 +72,8 @@ export async function TodoMutations() {
         const todo = new Todo()
         todo.description = description
         todo.isDone = false
-        return repository.save(todo)
+
+        return formatResult(await repository.save(todo))
       }
     ),
     deleteTodo: await configureRepository<Todo, IDeleteTodo>(
@@ -58,7 +81,8 @@ export async function TodoMutations() {
       async (repository, { input: { id } }) => {
         const todo = await repository.findOne(id)
         await repository.delete(id)
-        return todo
+
+        return formatResult(todo)
       }
     ),
     updateTodo: await configureRepository<Todo, IUpdateTodo>(
@@ -68,7 +92,8 @@ export async function TodoMutations() {
         if (!todo) return null
         todo.description = description || todo.description
         todo.isDone = isDone || todo.isDone
-        return repository.save(todo)
+
+        return formatResult(await repository.save(todo))
       }
     ),
   }

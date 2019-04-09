@@ -9,10 +9,19 @@ type Mutation {
   deleteTodo(input: DeleteTodoInput!): Todo
 }
 
+type Date {
+  dayOfWeek: String!
+  dayOfMonth: Int!
+  month: String!
+  dateLongForm: String!
+}
+
 type Todo {
   id: ID!
   description: String!
   isDone: Boolean!
+  createdAt: Date!
+  updatedAt: Date!
 }
 
 enum ModelSortDirection {

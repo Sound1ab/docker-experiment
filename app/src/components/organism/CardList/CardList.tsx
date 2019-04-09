@@ -24,20 +24,22 @@ export function CardList({ events, activeToggle }: ICardList) {
         .filter(event =>
           activeToggle === TOGGLES.ALL
             ? event
-            : TOGGLES.COMPLETE
+            : activeToggle === TOGGLES.COMPLETE
             ? event.isDone
             : !event.isDone
         )
-        // .sort(
-        //   (eventA, eventB) => eventA.date.dayOfMonth - eventB.date.dayOfMonth
-        // )
+        .sort(
+          (eventA, eventB) =>
+            new Date(eventA.createdAt.dateLongForm) -
+            new Date(eventB.createdAt.dateLongForm)
+        )
         .map(event => (
           <Card
             key={event.id}
-            dayOfMonth={13}
-            dayOfWeek={'Thursday'}
+            dayOfMonth={event.createdAt.dayOfMonth}
+            dayOfWeek={event.createdAt.dayOfWeek}
             location={event.description}
-            month={'Nov'}
+            month={event.createdAt.month}
           />
         ))}
     </Style>
