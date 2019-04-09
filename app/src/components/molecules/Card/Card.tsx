@@ -1,6 +1,31 @@
-import React from 'react'
+import gql from 'graphql-tag'
+import React, { useEffect, useRef } from 'react'
+import { useMutation } from 'react-apollo-hooks'
 import { styled } from '../../../theme'
+import { ListTodosDocument } from '../../App'
 import { Heading } from '../../atoms'
+
+const UpdateTodoDocument = gql`
+  mutation UpdateTodo($id: ID!, $isDone: Boolean, $description: String) {
+    updateTodo(input: { id: $id, isDone: $isDone, description: $description }) {
+      id
+      description
+      isDone
+      createdAt {
+        dateLongForm
+        dayOfMonth
+        dayOfWeek
+        month
+      }
+      updatedAt {
+        dateLongForm
+        dayOfMonth
+        dayOfWeek
+        month
+      }
+    }
+  }
+`
 
 const Style = styled.div`
   position: relative;
@@ -49,13 +74,54 @@ const Style = styled.div`
 `
 
 interface ICard {
+  id: number
   dayOfMonth: number
   dayOfWeek: string
   month: string
   location: string
+  isDone: boolean
 }
 
-export function Card({ dayOfMonth, dayOfWeek, location, month }: ICard) {
+export function Card({
+  id,
+  dayOfMonth,
+  dayOfWeek,
+  location,
+  month,
+  isDone,
+}: ICard) {
+  const inputEl = useRef<HTMLInputElement>(null)
+  const updateTodo = useMutation(UpdateTodoDocument, {
+    update: (cache, { data: { updateTodo } }) => {
+      const result = cache.readQuery({
+        query: ListTodosDocument,
+      }) as any
+      const todos = (result && result.listTodos && result.listTodos.items) || []
+      cache.writeQuery({
+        data: {
+          listTodos: {
+            items: todos
+              .filter((todo: any) => todo.id !== id)
+              .concat([updateTodo]),
+          },
+        },
+        query: ListTodosDocument,
+      })
+    },
+  })
+
+  async function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
+    console.log(e.target.checked)
+    await updateTodo({ variables: { id, isDone: e.target.checked } })
+  }
+
+  useEffect(() => {
+    if (!inputEl || !inputEl.current) {
+      return
+    }
+    inputEl.current.checked = isDone
+  }, [])
+
   return (
     <Style data-testid="Card">
       <div className="card-cell card-date">
@@ -68,7 +134,7 @@ export function Card({ dayOfMonth, dayOfWeek, location, month }: ICard) {
         </Heading>
         <Heading type="h2">{location}</Heading>
       </div>
-      <span className="card-chevron" />
+      <input type="checkbox" ref={inputEl} onChange={handleOnChange} />
     </Style>
   )
 }

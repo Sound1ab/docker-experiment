@@ -36,10 +36,12 @@ export function CardList({ events, activeToggle }: ICardList) {
         .map(event => (
           <Card
             key={event.id}
+            id={event.id}
             dayOfMonth={event.createdAt.dayOfMonth}
             dayOfWeek={event.createdAt.dayOfWeek}
             location={event.description}
             month={event.createdAt.month}
+            isDone={event.isDone}
           />
         ))}
     </Style>
