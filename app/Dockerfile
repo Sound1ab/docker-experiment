@@ -1,4 +1,4 @@
 FROM node:carbon
-WORKDIR usr/src/api
+WORKDIR usr/src/app
 ADD . .
 RUN npm install

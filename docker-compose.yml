@@ -26,3 +26,20 @@ services:
       - .env
     ports:
       - 5431:5432
+  app:
+    working_dir: /usr/src/app
+    build: ./app
+    restart: always
+    image: deadly-banjo-app:latest
+    volumes:
+      - ./app:/usr/src/app
+    environment:
+      - NODE_ENV=development
+      - PORT=8080
+    ports:
+      - 8080:8080
+    command: npm start
+    depends_on:
+      - api
+    env_file:
+      - .env

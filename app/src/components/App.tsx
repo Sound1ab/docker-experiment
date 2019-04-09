@@ -29,7 +29,7 @@ export function App() {
           <TypographyStyle typography={typography} />
           <GoogleFont typography={typography} />
           <Container>
-            <Banner text="Find a show!" />
+            <Banner text="Find a show yoyo!" />
             <Toggle
               setToggle={handleToggle}
               toggles={[TOGGLES.ROCK, TOGGLES.JAZZ, TOGGLES.FOLK, TOGGLES.ALL]}
