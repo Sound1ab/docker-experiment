@@ -30,8 +30,8 @@ export function CardList({ events, activeToggle }: ICardList) {
         )
         .sort(
           (eventA, eventB) =>
-            new Date(eventA.createdAt.dateLongForm) -
-            new Date(eventB.createdAt.dateLongForm)
+            Number(new Date(eventB.createdAt.dateLongForm)) -
+            Number(new Date(eventA.createdAt.dateLongForm))
         )
         .map(event => (
           <Card
