@@ -53,6 +53,14 @@ export async function TodoMutations() {
         return repository.save(todo)
       }
     ),
+    deleteTodo: await configureRepository<Todo, IDeleteTodo>(
+      Todo,
+      async (repository, { input: { id } }) => {
+        const todo = await repository.findOne(id)
+        await repository.delete(id)
+        return todo
+      }
+    ),
     updateTodo: await configureRepository<Todo, IUpdateTodo>(
       Todo,
       async (repository, { input: { id, description, isDone } }) => {
@@ -61,14 +69,6 @@ export async function TodoMutations() {
         todo.description = description || todo.description
         todo.isDone = isDone || todo.isDone
         return repository.save(todo)
-      }
-    ),
-    deleteTodo: await configureRepository<Todo, IDeleteTodo>(
-      Todo,
-      async (repository, { input: { id } }) => {
-        const todo = await repository.findOne(id)
-        await repository.delete(id)
-        return todo
       }
     ),
   }

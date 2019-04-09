@@ -7,13 +7,18 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "docker:up": "docker-compose up",
     "docker:down": "docker-compose down",
-    "ssh": "docker exec -it $CONTAINER sh"
+    "ssh": "docker exec -it $CONTAINER sh",
+    "lint:app": "tslint 'app/src/**/*.{ts,tsx}' --project app/tsconfig.json --format stylish",
+    "lint:api": "tslint 'api/src/**/*.{ts,tsx}' --project api/tsconfig.json --format stylish"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "prettier": "^1.16.4"
+    "prettier": "^1.16.4",
+    "tslint": "^5.15.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.4.2"
   },
   "dependencies": {}
 }

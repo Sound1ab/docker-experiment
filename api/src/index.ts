@@ -1,10 +1,10 @@
+import { ApolloServer, IResolvers } from 'apollo-server-express'
+import express from 'express'
 import 'reflect-metadata'
 import { createConnection } from 'typeorm'
-import express from 'express'
 import { config } from './config'
-import { ApolloServer, IResolvers } from 'apollo-server-express'
 import { convertGraphQLToTypedefs } from './helpers'
-import { TodoQueries, TodoMutations } from './resolvers/todo'
+import { TodoMutations, TodoQueries } from './resolvers/todo'
 
 const port = process.env.PORT || 8088
 
@@ -14,17 +14,17 @@ async function configureServer() {
   app.set('env', process.env.APP_ENV)
 
   const resolvers: IResolvers = {
-    Query: {
-      ...(await TodoQueries()),
-    },
     Mutation: {
       ...(await TodoMutations()),
+    },
+    Query: {
+      ...(await TodoQueries()),
     },
   }
 
   const server = new ApolloServer({
-    typeDefs: convertGraphQLToTypedefs(),
     resolvers,
+    typeDefs: convertGraphQLToTypedefs(),
   })
 
   server.applyMiddleware({ app })
