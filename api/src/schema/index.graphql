@@ -1,5 +1,5 @@
 type Query {
-  getTodo(id: ID!): Todo
+  readTodo(id: ID!): Todo
   listTodos(filter: ModelTodoFilterInput, limit: Int, nextToken: String): ModelTodoConnection
 }
 

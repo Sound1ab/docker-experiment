@@ -1,7 +1,7 @@
 import { Todo } from '../entities/Todo'
 import { configureRepository } from '../helpers'
 
-interface IGetTodo {
+interface IReadTodo {
   id: number
 }
 
@@ -48,12 +48,6 @@ function formatResult(todo: Todo | undefined) {
 
 export async function TodoQueries() {
   return {
-    getTodo: await configureRepository<Todo, IGetTodo>(
-      Todo,
-      async (repository, { id }) => {
-        return formatResult(await repository.findOne(id))
-      }
-    ),
     listTodos: await configureRepository<Todo, {}>(Todo, async repository => {
       const results = await repository.find()
       return {
@@ -61,6 +55,12 @@ export async function TodoQueries() {
         nextToken: '1234',
       }
     }),
+    readTodo: await configureRepository<Todo, IReadTodo>(
+      Todo,
+      async (repository, { id }) => {
+        return formatResult(await repository.findOne(id))
+      }
+    ),
   }
 }
 
@@ -91,7 +91,7 @@ export async function TodoMutations() {
         const todo = await repository.findOne(id)
         if (!todo) return null
         todo.description = description || todo.description
-        todo.isDone = isDone || todo.isDone
+        todo.isDone = isDone === undefined ? todo.isDone : isDone
 
         return formatResult(await repository.save(todo))
       }
