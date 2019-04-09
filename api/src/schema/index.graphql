@@ -95,6 +95,7 @@ input CreateTodoInput {
 input UpdateTodoInput {
   id: ID!
   description: String
+  isDone: Boolean
 }
 
 input DeleteTodoInput {

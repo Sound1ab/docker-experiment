@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "docker-compose up -d",
+    "docker:up": "docker-compose up",
+    "docker:down": "docker-compose down",
     "ssh": "docker exec -it $CONTAINER sh"
   },
   "keywords": [],

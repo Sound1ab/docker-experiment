@@ -15,14 +15,14 @@ services:
     command: npm start
     depends_on:
       - db
+    env_file:
+      - .env
   db:
     image: postgres:10
     restart: always
     volumes:
       - $HOME/docker/volumes/postgres:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: docker
-      POSTGRES_DB: db
+    env_file:
+      - .env
     ports:
       - 5431:5432

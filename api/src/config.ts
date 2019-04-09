@@ -1,5 +1,3 @@
-// require('dotenv').config()
-
 export const config = {
   type: process.env.TYPEORM_TYPE,
   host: process.env.TYPEORM_HOST,
