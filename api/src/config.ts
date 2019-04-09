@@ -1,4 +1,4 @@
-require('dotenv').config()
+// require('dotenv').config()
 
 export const config = {
   type: process.env.TYPEORM_TYPE,
