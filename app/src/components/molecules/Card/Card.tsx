@@ -2,10 +2,15 @@ import gql from 'graphql-tag'
 import React, { useEffect, useRef } from 'react'
 import { useMutation } from 'react-apollo-hooks'
 import { styled } from '../../../theme'
+import {
+  ListTodosQuery,
+  UpdateTodoMutation,
+  UpdateTodoMutationVariables,
+} from '../../apollo/generated_components_typings'
 import { ListTodosDocument } from '../../App'
 import { Heading } from '../../atoms'
 
-const UpdateTodoDocument = gql`
+export const UpdateTodoDocument = gql`
   mutation UpdateTodo($id: ID!, $isDone: Boolean, $description: String) {
     updateTodo(input: { id: $id, isDone: $isDone, description: $description }) {
       id
@@ -74,7 +79,7 @@ const Style = styled.div`
 `
 
 interface ICard {
-  id: number
+  id: string
   dayOfMonth: number
   dayOfWeek: string
   month: string
@@ -91,18 +96,23 @@ export function Card({
   isDone,
 }: ICard) {
   const inputEl = useRef<HTMLInputElement>(null)
-  const updateTodo = useMutation(UpdateTodoDocument, {
-    update: (cache, { data: { updateTodo } }) => {
-      const result = cache.readQuery({
+  const updateTodo = useMutation<
+    UpdateTodoMutation,
+    UpdateTodoMutationVariables
+  >(UpdateTodoDocument, {
+    update: (cache, { data: { updateTodo: updatedTodo } }) => {
+      const result = cache.readQuery<ListTodosQuery>({
         query: ListTodosDocument,
-      }) as any
+      })
+
       const todos = (result && result.listTodos && result.listTodos.items) || []
-      cache.writeQuery({
+
+      cache.writeQuery<ListTodosQuery>({
         data: {
           listTodos: {
             items: todos
               .filter((todo: any) => todo.id !== id)
-              .concat([updateTodo]),
+              .concat([updatedTodo]),
           },
         },
         query: ListTodosDocument,

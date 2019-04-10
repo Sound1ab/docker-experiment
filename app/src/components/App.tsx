@@ -1,19 +1,19 @@
 import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { ApolloProvider } from 'react-apollo'
-import { Query } from 'react-apollo'
 import { ApolloProvider as ApolloHooksProvider } from 'react-apollo-hooks'
 import { GoogleFont, TypographyStyle } from 'react-typography'
 import { TOGGLES } from '../enums'
 import { client } from '../services/Apollo/clientConfig'
 import { typography } from '../theme/typography'
+import { ListTodosComponent, Todo } from './apollo/generated_components_typings'
 import { Container, Input } from './atoms'
 import { Banner, Toggle } from './molecules'
 import { CardList } from './organism'
 import { GlobalStyle, ThemeProvider } from './utility'
 
 export const ListTodosDocument = gql`
-  {
+  query ListTodos {
     listTodos {
       items {
         description
@@ -57,21 +57,22 @@ export function App() {
                 toggles={[TOGGLES.COMPLETE, TOGGLES.INCOMPLETE, TOGGLES.ALL]}
                 activeToggle={toggle}
               />
-              <Query query={ListTodosDocument}>
+              <ListTodosComponent>
                 {({ loading, error, data }) => {
                   if (loading) return <p>Loading...</p>
                   if (error) return <p>Error :(</p>
 
-                  console.log(data)
+                  const todos =
+                    (data && data.listTodos && data.listTodos.items) || []
 
                   return (
                     <CardList
-                      events={data.listTodos.items}
+                      events={todos.filter(event => event != null) as Todo[]}
                       activeToggle={toggle}
                     />
                   )
                 }}
-              </Query>
+              </ListTodosComponent>
             </Container>
           </>
         </ThemeProvider>

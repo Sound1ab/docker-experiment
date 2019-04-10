@@ -8,7 +8,7 @@ import {
 
 @Entity()
 export class Todo {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   public id: number
 
   @Column('text')

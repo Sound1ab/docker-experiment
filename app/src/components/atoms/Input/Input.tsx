@@ -2,9 +2,14 @@ import gql from 'graphql-tag'
 import React, { useState } from 'react'
 import { useMutation } from 'react-apollo-hooks'
 import { styled } from '../../../theme'
+import {
+  CreateTodoMutation,
+  CreateTodoMutationVariables,
+  ListTodosQuery,
+} from '../../apollo/generated_components_typings'
 import { ListTodosDocument } from '../../App'
 
-const CreateTodoDocument = gql`
+export const CreateTodoDocument = gql`
   mutation CreateTodo($description: String!) {
     createTodo(input: { description: $description }) {
       id
@@ -40,14 +45,17 @@ const Style = styled.div`
 
 export function Input() {
   const [todo, setTodo] = useState('')
-  const createTodo = useMutation(CreateTodoDocument, {
-    update: (cache, { data: { createTodo } }) => {
-      const result = cache.readQuery({
+  const createTodo = useMutation<
+    CreateTodoMutation,
+    CreateTodoMutationVariables
+  >(CreateTodoDocument, {
+    update: (cache, { data: { createTodo: newTodo } }) => {
+      const result = cache.readQuery<ListTodosQuery>({
         query: ListTodosDocument,
-      }) as any
+      })
       const todos = (result && result.listTodos && result.listTodos.items) || []
-      cache.writeQuery({
-        data: { listTodos: { items: todos.concat([createTodo]) } },
+      cache.writeQuery<ListTodosQuery>({
+        data: { listTodos: { items: todos.concat([newTodo]) } },
         query: ListTodosDocument,
       })
     },
